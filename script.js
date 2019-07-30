@@ -32,21 +32,30 @@ btnCreate.addEventListener('click', async () => {
     }
     console.log('newUser: ', user);
 
-    const res = await fetch(API + 'users', {
-        method: 'POST',
-        body: JSON.stringify(user),
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
+    if (nameEl.value == "") {
+        nameEl.style.borderColor = "red";
+        nameEl.placeholder = "field not filled";
+    }
+    if (ageEl.value == "") {
+        ageEl.style.borderColor = "red";
+        ageEl.placeholder = "field not filled";
+    } else {
 
-    const content = await res.json();
-    console.log(content);
+        const res = await fetch(API + 'users', {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
 
-    users.push(user);
-    renderUsers();
+        const content = await res.json();
+        console.log(content);
 
+        users.push(user);
+        renderUsers();
+    }
 })
 
 async function deleteUser(userId) {
@@ -63,11 +72,11 @@ function renderUsers() {
         const div = document.createElement('div');
         div.className = 'user';
         div.innerHTML = `
-      <h4>${user.name}</h4>
-      <h5>${user.age}</h5>
+      <h4>Name:  ${user.name}</h4>
+      <h5>Age:  ${user.age}</h5>
     `;
         const btn = document.createElement('button');
-        btn.className = 'user_remove';
+        btn.className = 'user_btn';
         btn.textContent = 'Delete';
 
         btn.addEventListener('click', () => {
@@ -78,13 +87,8 @@ function renderUsers() {
     })
 }
 
-
-
-
-
 getUsers().then(data => {
     users = data.data;
     console.log('users: ', users);
-    console.log('users: ', data);
     renderUsers();
 });
