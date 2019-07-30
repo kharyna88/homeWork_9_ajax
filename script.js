@@ -1,4 +1,4 @@
-    
+
 // get users -> 
 // GET https://jsonplaceholder.typicode.com/users?search=Ihor&limit=20
 // get user -> GET https://jsonplaceholder.typicode.com/users?id=212312
@@ -20,60 +20,62 @@ const btnCreate = document.querySelector('#create');
 
 function getUsers() {
     return fetch(API + 'users').then(res => res.json())
-      .catch(err => {
-        console.log('Cant get users', err);
-      });
-  }
+        .catch(err => {
+            console.log('Cant get users', err);
+        });
+}
 
-  btnCreate.addEventListener('click', async () => {
-   const user = { 
-       name: nameEl.value, 
-        age: ageEl.value 
+btnCreate.addEventListener('click', async () => {
+    const user = {
+        name: nameEl.value,
+        age: ageEl.value
     }
     console.log('newUser: ', user);
 
     const res = await fetch(API + 'users', {
         method: 'POST',
-        body: JSON.stringify(user)
-      })
+        body: JSON.stringify(user),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+
     const content = await res.json();
     console.log(content);
 
-    users.unshift(user);
+    users.push(user);
     renderUsers();
 
-  })
+})
 
-  
-
-  async function deleteUser(userId) {
+async function deleteUser(userId) {
     await fetch(API + 'users/' + userId, {
-      method: 'DELETE'
+        method: 'DELETE'
     })
     users = users.filter((user) => user.id !== userId);
     renderUsers();
-  }
+}
 
-
-  function renderUsers() {
- container.innerHTML = '';
-  users.forEach((user) => { 
-    const div = document.createElement('div');
-    div.className = 'user';
-    div.innerHTML = `
+function renderUsers() {
+    container.innerHTML = '';
+    users.forEach((user) => {
+        const div = document.createElement('div');
+        div.className = 'user';
+        div.innerHTML = `
       <h4>${user.name}</h4>
       <h5>${user.age}</h5>
     `;
-    const btn = document.createElement('button');
-    btn.className = 'user__remove';
-    btn.textContent = 'X';
+        const btn = document.createElement('button');
+        btn.className = 'user_remove';
+        btn.textContent = 'Delete';
 
-    btn.addEventListener('click', () => {
-      deleteUser(user.id);
+        btn.addEventListener('click', () => {
+            deleteUser(user.id);
+        })
+        div.append(btn);
+        container.append(div);
     })
-    div.append(btn);
-    container.append(div);
-  })
 }
 
 
@@ -85,4 +87,4 @@ getUsers().then(data => {
     console.log('users: ', users);
     console.log('users: ', data);
     renderUsers();
-  });
+});
